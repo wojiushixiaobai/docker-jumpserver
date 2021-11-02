@@ -7,14 +7,9 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Get tag
-      id: get_tag
+    - name: git clone guacamole-server
       run: |
-        TAG=$(basename ${GITHUB_REF})
-        echo "::set-output name=TAG::$TAG"
+        git clone --branch 1.3.0 https://github.com/apache/guacamole-server.git
 
     - name: Build Docker Image
       uses: ilteoood/docker_buildx@master
@@ -49,3 +44,15 @@ jobs:
         tag: 1.3.0
         dockerFile: Dockerfile
         platform: linux/amd64
+
+    - name: Build Docker Image for GitHub
+      uses: ilteoood/docker_buildx@master
+      with:
+        publish: true
+        dockerServer: ghcr.io
+        imageName: ghcr.io/wojiushixiaobai/guacd
+        dockerUser: wojiushixiaobai
+        dockerPassword: ${{ secrets.GITHUB_TOKEN }}
+        tag: 1.3.0
+        dockerFile: Dockerfile
+        platform: linux/amd64,linux/arm64
