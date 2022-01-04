@@ -11,7 +11,7 @@ jobs:
     steps:
     - name: git clone guacamole-server
       run: |
-        git clone --branch 1.3.0 https://github.com/apache/guacamole-server.git
+        git clone --branch 1.4.0 https://github.com/apache/guacamole-server.git
         mv guacamole-server/* ./
         rm -rf guacamole-server
 
@@ -22,7 +22,7 @@ jobs:
         imageName: wojiushixiaobai/guacd
         dockerUser: wojiushixiaobai
         dockerPassword: ${{ secrets.DOCKER_HUB_TOKEN }}
-        tag: 1.3.0
+        tag: 1.4.0
         dockerFile: Dockerfile
         platform: linux/amd64,linux/arm64
 
@@ -33,7 +33,19 @@ jobs:
         imageName: jumpserver/guacd
         dockerUser: wojiushixiaobai
         dockerPassword: ${{ secrets.DOCKER_HUB_TOKEN }}
-        tag: 1.3.0
+        tag: 1.4.0
+        dockerFile: Dockerfile
+        platform: linux/amd64,linux/arm64
+
+    - name: Build Docker Image for GitHub
+      uses: ilteoood/docker_buildx@master
+      with:
+        publish: true
+        dockerServer: ghcr.io
+        imageName: ghcr.io/wojiushixiaobai/guacd
+        dockerUser: wojiushixiaobai
+        dockerPassword: ${{ secrets.GITHUB_TOKEN }}
+        tag: 1.4.0
         dockerFile: Dockerfile
         platform: linux/amd64,linux/arm64
 
@@ -45,18 +57,6 @@ jobs:
         imageName: swr.cn-south-1.myhuaweicloud.com/jumpserver/guacd
         dockerUser: cn-south-1@TZZDVNMCLUKINTT3FMLI
         dockerPassword: ${{ secrets.HW_CLOUD_TOKEN }}
-        tag: 1.3.0
+        tag: 1.4.0
         dockerFile: Dockerfile
         platform: linux/amd64
-
-    - name: Build Docker Image for GitHub
-      uses: ilteoood/docker_buildx@master
-      with:
-        publish: true
-        dockerServer: ghcr.io
-        imageName: ghcr.io/wojiushixiaobai/guacd
-        dockerUser: wojiushixiaobai
-        dockerPassword: ${{ secrets.GITHUB_TOKEN }}
-        tag: 1.3.0
-        dockerFile: Dockerfile
-        platform: linux/amd64,linux/arm64
