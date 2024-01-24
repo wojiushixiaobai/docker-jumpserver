@@ -4,10 +4,10 @@
 <h3 align="center">多云环境下更好用的堡垒机</h3>
 
 <p align="center">
-  <a href="https://www.gnu.org/licenses/gpl-3.0.html"><img src="https://img.shields.io/github/license/jumpserver/Dockerfile" alt="License: GPLv3"></a>
-  <a href="https://hub.docker.com/u/jumpserver"><img src="https://img.shields.io/docker/pulls/jumpserver/jms_all.svg" alt="Codacy"></a>
-  <a href="https://github.com/jumpserver/Dockerfile/commits"><img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jumpserver/jumpserver.svg" /></a>
-  <a href="https://github.com/jumpserver/Dockerfile"><img src="https://img.shields.io/github/stars/jumpserver/Dockerfile?color=%231890FF&style=flat-square" alt="Stars"></a>
+  <a href="https://www.gnu.org/licenses/gpl-3.0.html"><img src="https://img.shields.io/github/license/wojiushixiaobai/docker-jumpserver" alt="License: GPLv3"></a>
+  <a href="https://hub.docker.com/u/wojiushixiaobai"><img src="https://img.shields.io/docker/pulls/wojiushixiaobai/jms_all.svg" alt="Codacy"></a>
+  <a href="https://github.com/wojiushixiaobai/docker-jumpserver/commits"><img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jumpserver/jumpserver.svg" /></a>
+  <a href="https://github.com/wojiushixiaobai/docker-jumpserver"><img src="https://img.shields.io/github/stars/wojiushixiaobai/docker-jumpserver?color=%231890FF&style=flat-square" alt="Stars"></a>
 </p>
 
 --------------------------
@@ -19,7 +19,7 @@
 快速部署
 ```sh
 # 测试环境可以使用，生产环境推荐外置数据
-git clone --depth=1 https://github.com/jumpserver/Dockerfile.git
+git clone --depth=1 https://github.com/wojiushixiaobai/docker-jumpserver.git
 cd Dockerfile
 cp config_example.conf .env
 docker-compose -f docker-compose-network.yml -f docker-compose-redis.yml -f docker-compose-mariadb.yml -f docker-compose-init-db.yml up -d
@@ -32,7 +32,7 @@ docker-compose -f docker-compose-network.yml -f docker-compose-redis.yml -f dock
 > 请先自行创建 数据库 和 Redis, 版本要求参考上面环境要求说明
 
 ```sh
-# 自行部署 MySQL 可以参考 (https://docs.jumpserver.org/zh/master/install/setup_by_lb/#mysql)
+# 自行部署 MySQL
 # mysql 创建用户并赋予权限, 请自行替换 nu4x599Wq7u0Bn8EABh3J91G 为自己的密码
 mysql -u root -p
 ```
@@ -45,11 +45,11 @@ flush privileges;
 ```
 
 ```sh
-# 自行部署 Redis 可以参考 (https://docs.jumpserver.org/zh/master/install/setup_by_lb/#redis)
+# 自行部署 Redis
 ```
 
 ```sh
-git clone --depth=1 https://github.com/jumpserver/Dockerfile.git
+git clone --depth=1 https://github.com/wojiushixiaobai/docker-jumpserver.git
 cd Dockerfile
 cp config_example.conf .env
 vi .env
@@ -58,7 +58,7 @@ vi .env
 # 版本号可以自己根据项目的版本修改
 VERSION=v3.10.2
 
-# 构建参数, 支持 amd64/arm64/loong64
+# 构建参数, 支持 amd64/arm64/ppc64le/s390x...
 TARGETARCH=amd64
 
 # Compose
@@ -119,7 +119,7 @@ cp config_example.conf .env
 vi .env
 ```
 ```vim
-# 构建参数, 支持 amd64/arm64
+# 构建参数, 支持 amd64/arm64/ppc64le/s390x...
 TARGETARCH=amd64
 ```
 ```bash

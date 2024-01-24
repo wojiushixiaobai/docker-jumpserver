@@ -32,7 +32,6 @@ RUN set -ex \
     && git clone -b ${VERSION} --depth=1 https://github.com/jumpserver/jumpserver /opt/jumpserver \
     && sed -i "s@VERSION = .*@VERSION = \"${VERSION}\"@g" /opt/jumpserver/apps/jumpserver/const.py \
     && chmod +x /opt/jumpserver/entrypoint.sh \
-    && rm -f /opt/jumpserver/Dockerfile-ce \
     && rm -rf /opt/jumpserver/.git /opt/jumpserver/.github
 
 WORKDIR /opt/jumpserver
