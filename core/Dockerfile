@@ -91,10 +91,10 @@ RUN set -ex \
     && rustUrl="https://static.rust-lang.org/dist" \
     && \
     case "${TARGETARCH}" in \
-        amd64) rustArch='x86_64-unknown-linux-gnu'; \
-            ;; \
-        arm64) rustArch='aarch64-unknown-linux-gnu'; \
-            ;; \
+        # amd64) rustArch='x86_64-unknown-linux-gnu'; \
+        #     ;; \
+        # arm64) rustArch='aarch64-unknown-linux-gnu'; \
+        #     ;; \
         mips64le) rustArch='mips64el-unknown-linux-gnuabi64'; \
             ;; \
         ppc64le) rustArch='powerpc64le-unknown-linux-gnu'; \
