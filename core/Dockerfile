@@ -41,97 +41,16 @@ RUN set -ex \
     && cd utils \
     && bash -ixeu build.sh
 
-FROM python:3.11-slim-bookworm as stage-2
+FROM wojiushixiaobai/core:base-bookworm as stage-2
 ARG TARGETARCH
-
-ARG BUILD_DEPENDENCIES="              \
-        g++                           \
-        make                          \
-        pkg-config"
-
-ARG DEPENDENCIES="                    \
-        freetds-dev                   \
-        libpq-dev                     \
-        libffi-dev                    \
-        libjpeg-dev                   \
-        libldap2-dev                  \
-        libsasl2-dev                  \
-        libssl-dev                    \
-        libxml2-dev                   \
-        libxmlsec1-dev                \
-        libxmlsec1-openssl            \
-        freerdp2-dev                  \
-        libaio-dev"
-
-ARG TOOLS="                           \
-        ca-certificates               \
-        curl                          \
-        default-libmysqlclient-dev    \
-        default-mysql-client          \
-        git                           \
-        git-lfs                       \
-        unzip                         \
-        xz-utils                      \
-        wget"
-
-RUN set -ex \
-    && apt-get update \
-    && apt-get -y install --no-install-recommends ${BUILD_DEPENDENCIES} \
-    && apt-get -y install --no-install-recommends ${DEPENDENCIES} \
-    && apt-get -y install --no-install-recommends ${TOOLS} \
-    && echo "no" | dpkg-reconfigure dash \
-    && apt-get clean all \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /opt
-
-ARG RUST_VERSION=1.71.1
-RUN set -ex \
-    && mkdir -p /opt/rust-install \
-    && rustUrl="https://static.rust-lang.org/dist" \
-    && \
-    case "${TARGETARCH}" in \
-        # amd64) rustArch='x86_64-unknown-linux-gnu'; \
-        #     ;; \
-        # arm64) rustArch='aarch64-unknown-linux-gnu'; \
-        #     ;; \
-        mips64le) rustArch='mips64el-unknown-linux-gnuabi64'; \
-            ;; \
-        ppc64le) rustArch='powerpc64le-unknown-linux-gnu'; \
-            ;; \
-        riscv64) rustArch='riscv64gc-unknown-linux-gnu'; \
-            ;; \
-        s390x) rustArch='s390x-unknown-linux-gnu'; \
-            ;; \
-        loong64) rustArch='loongarch64-unknown-linux-gnu'; \
-            rustUrl="https://download.jumpserver.org/rust/dist"; \
-            ;; \
-        *) echo >&2 "error: unsupported architecture: ${TARGETARCH}"; \
-            ;; \
-    esac \
-    && \
-    if [ -n "${rustArch}" ]; then \
-        wget -O /opt/rust.tar.gz "${rustUrl}/rust-${RUST_VERSION}-${rustArch}.tar.xz"; \
-        tar -xf /opt/rust.tar.gz -C /opt/rust-install --strip-components=1; \
-        cd /opt/rust-install && ./install.sh; \
-        cd /opt && rm -rf /opt/rust-install /opt/rust.tar.gz; \
-    fi
-
-COPY --from=stage-1 /opt/jumpserver/poetry.lock /opt/jumpserver/pyproject.toml /opt/jumpserver/
 
 WORKDIR /opt/jumpserver
 
-ARG PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
-
-ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=1
+ADD poetry.lock pyproject.toml /opt/jumpserver/
 
 RUN --mount=type=cache,target=/root/.cache \
-set -ex \
+    set -ex \
     && python3 -m venv /opt/py3 \
-    && pip install $(grep cryptography pyproject.toml | sed 's/ = /==/g' | sed 's/"//g') \
-    && pip install poetry \
-    && poetry config virtualenvs.create false \
     && . /opt/py3/bin/activate \
     && poetry install --only=main
 
