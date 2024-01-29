@@ -46,7 +46,7 @@ ARG TARGETARCH
 
 WORKDIR /opt/jumpserver
 
-ADD poetry.lock pyproject.toml /opt/jumpserver/
+COPY --from=stage-1 /opt/jumpserver/poetry.lock /opt/jumpserver/pyproject.toml /opt/jumpserver/
 
 RUN --mount=type=cache,target=/root/.cache \
     set -ex \
