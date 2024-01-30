@@ -20,14 +20,14 @@ jobs:
         if: matrix.component == 'core'
         with:
           python-version: 3.11
-      
+
       - uses: abatilo/actions-poetry@v2
         if: matrix.component == 'core'
 
       - name: Get Version
         run: |
           echo "version=$(basename ${GITHUB_REF})" >> $GITHUB_ENV
-      
+
       - name: Generate poetry.lock
         if: matrix.component == 'core'
         run: |
@@ -67,6 +67,7 @@ jobs:
             ${{ github.repository_owner }}/jms_${{ matrix.component }}:latest
             ghcr.io/${{ github.repository_owner }}/jms_${{ matrix.component }}:${{ env.version }}
             ghcr.io/${{ github.repository_owner }}/jms_${{ matrix.component }}:latest
+          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -109,6 +110,7 @@ jobs:
             ${{ github.repository_owner }}/jms_${{ matrix.component }}:latest
             ghcr.io/${{ github.repository_owner }}/jms_${{ matrix.component }}:${{ env.version }}
             ghcr.io/${{ github.repository_owner }}/jms_${{ matrix.component }}:latest
+          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
