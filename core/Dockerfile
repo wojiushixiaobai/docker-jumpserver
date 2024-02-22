@@ -61,6 +61,7 @@ ENV LANG=en_US.UTF-8 \
 ARG DEPENDENCIES="                    \
         freerdp2-dev                  \
         libldap2-dev                  \
+        libpq-dev                     \
         libx11-dev                    \
         libxmlsec1-openssl"
 
