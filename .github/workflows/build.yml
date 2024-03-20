@@ -50,6 +50,7 @@ jobs:
           sed -i 's@^urllib3 =@# urllib3 =@g' pyproject.toml
           sed -i 's@^COPY --from=stage-1 /opt/jumpserver/poetry.lock /opt/jumpserver/pyproject.toml@ADD poetry.lock pyproject.toml@g' core/Dockerfile
           poetry config virtualenvs.create false
+          poetry source remove tsinghua
           poetry source add --priority=primary PyPI
           poetry lock --no-update
 
