@@ -1,4 +1,4 @@
-FROM jumpserver/web-static:v1.0.6-bookworm as stage-1
+FROM jumpserver/web-static:v1.0.7-bookworm as stage-1
 FROM debian:bookworm-slim as stage-2
 ARG TARGETARCH
 
@@ -24,7 +24,7 @@ RUN set -ex \
     && chmod 755 /usr/local/bin/check \
     && rm -f check-${CHECK_VERSION}-linux-${TARGETARCH}.tar.gz
 
-ARG VERSION=v3.10.3
+ARG VERSION=v3.10.4
 ENV VERSION=${VERSION}
 
 RUN set -ex \
@@ -64,7 +64,7 @@ COPY web/nginx.conf /etc/nginx/
 
 WORKDIR /opt
 
-ARG VERSION=v3.10.3
+ARG VERSION=v3.10.4
 ENV VERSION=${VERSION}
 
 VOLUME /var/log/nginx
