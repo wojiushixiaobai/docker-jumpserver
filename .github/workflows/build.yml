@@ -98,13 +98,12 @@ jobs:
         if: matrix.component == 'core'
         run: |
           wget https://github.com/jumpserver/jumpserver/raw/${{ env.version }}/pyproject.toml
-          cryptography_version=$(awk -F'"' '/cryptography/{print $2}' pyproject.toml)
-          echo "cryptography_version=${cryptography_version}" >> $GITHUB_ENV
           sed -i 's@^cython =@# cython =@g' pyproject.toml
           sed -i 's@^certifi =@# certifi =@g' pyproject.toml
           sed -i 's@^cffi =@# cffi =@g' pyproject.toml
           sed -i 's@^idna =@# idna =@g' pyproject.toml
           sed -i 's@^urllib3 =@# urllib3 =@g' pyproject.toml
+          sed -i 's@^cryptography =@# cryptography =@g' pyproject.toml
           sed -i 's@^COPY --from=stage-1 /opt/jumpserver/poetry.lock /opt/jumpserver/pyproject.toml@ADD poetry.lock pyproject.toml@g' core/Dockerfile
           poetry config virtualenvs.create false
           poetry source remove tsinghua
@@ -131,8 +130,6 @@ jobs:
           file: ${{ matrix.component }}/Dockerfile.base
           platforms: linux/amd64,linux/arm64,linux/ppc64le,linux/s390x
           push: true
-          build-args:
-            CRYPTOGRAPHY_VERSION=${{ env.cryptography_version }}
           tags: |
             ${{ github.repository_owner }}/${{ matrix.component }}:base-bookworm
             ghcr.io/${{ github.repository_owner }}/${{ matrix.component }}:base-bookworm

@@ -74,13 +74,10 @@ RUN set -ex \
         cd /opt && rm -rf /opt/rust-install /opt/rust.tar.gz; \
     fi
 
-ARG CRYPTOGRAPHY_VERSION
-
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=1
 
 RUN --mount=type=cache,target=/root/.cache \
     set -ex \
-    && pip install cryptography==${CRYPTOGRAPHY_VERSION} \
     && pip install poetry
