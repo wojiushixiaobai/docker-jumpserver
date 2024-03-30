@@ -1,7 +1,7 @@
 FROM redis:7.0-bookworm as redis
 FROM jumpserver/web-static:v1.1.0 as static
 FROM jumpserver/guacd:1.5.3-bookworm as guacd
-FROM wojiushixiaobai/jms_core:v3.10.6
+FROM wojiushixiaobai/jms_core:v3.10.7
 ARG TARGETARCH
 
 ARG TOOLS="                           \
@@ -47,8 +47,8 @@ RUN set -ex \
             ;; \
     esac
 
-ARG HELM_VERSION=v3.12.2
-ARG KUBECTL_VERSION=v1.27.4
+ARG HELM_VERSION=v3.14.3
+ARG KUBECTL_VERSION=v1.29.3
 RUN set -ex \
     && wget -O /usr/local/bin/rawkubectl https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl \
     && wget http://download.jumpserver.org/public/kubectl_aliases.tar.gz \
@@ -62,7 +62,7 @@ RUN set -ex \
     && chown root:root /usr/local/bin/rawhelm /usr/local/bin/rawkubectl \
     && rm -f /opt/*.tar.gz
 
-ARG WISP_VERSION=v0.1.16
+ARG WISP_VERSION=v0.1.19
 RUN set -ex \
     && wget https://github.com/jumpserver/wisp/releases/download/${WISP_VERSION}/wisp-${WISP_VERSION}-linux-${TARGETARCH}.tar.gz \
     && tar -xf wisp-${WISP_VERSION}-linux-${TARGETARCH}.tar.gz -C /usr/local/bin/ --strip-components=1 \

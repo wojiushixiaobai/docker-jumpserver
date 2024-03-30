@@ -55,8 +55,8 @@ RUN set -ex \
         ; \
     fi
 
-ARG HELM_VERSION=v3.13.3
-ARG KUBECTL_VERSION=v1.29.0
+ARG HELM_VERSION=v3.14.3
+ARG KUBECTL_VERSION=v1.29.3
 RUN set -ex \
     && wget -O kubectl.tar.gz https://dl.k8s.io/${KUBECTL_VERSION}/kubernetes-client-linux-${TARGETARCH}.tar.gz \
     && tar -xf kubectl.tar.gz --strip-components=3 -C /opt kubernetes/client/bin/kubectl \
@@ -79,7 +79,7 @@ RUN set -ex \
 
 WORKDIR /opt/koko
 
-ARG VERSION=v3.10.6
+ARG VERSION=v3.10.7
 ENV VERSION=${VERSION}
 
 RUN set -ex \
@@ -122,7 +122,7 @@ COPY --from=stage-2 /opt/kubectl-aliases /opt/kubectl-aliases
 
 WORKDIR /opt/koko
 
-ARG VERSION=v3.10.6
+ARG VERSION=v3.10.7
 ENV VERSION=${VERSION}
 
 VOLUME /opt/koko/data

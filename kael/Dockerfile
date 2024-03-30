@@ -23,7 +23,7 @@ RUN set -ex \
     && chmod 755 /usr/local/bin/check \
     && rm -f check-${CHECK_VERSION}-linux-${TARGETARCH}.tar.gz
 
-ARG WISP_VERSION=v0.1.16
+ARG WISP_VERSION=v0.1.19
 RUN set -ex \
     && wget https://github.com/jumpserver/wisp/releases/download/${WISP_VERSION}/wisp-${WISP_VERSION}-linux-${TARGETARCH}.tar.gz \
     && tar -xf wisp-${WISP_VERSION}-linux-${TARGETARCH}.tar.gz -C /usr/local/bin/ --strip-components=1 \
@@ -33,7 +33,7 @@ RUN set -ex \
 
 WORKDIR /opt/kael
 
-ARG VERSION=v3.10.6
+ARG VERSION=v3.10.7
 ENV VERSION=${VERSION}
 
 RUN set -ex \
@@ -69,7 +69,7 @@ COPY --from=stage-1 /opt/kael /opt/kael
 
 WORKDIR /opt/kael
 
-ARG VERSION=v3.10.6
+ARG VERSION=v3.10.7
 ENV VERSION=${VERSION}
 
 VOLUME /opt/kael/data
