@@ -1,4 +1,3 @@
-FROM jumpserver/web-static:v1.1.0 as stage-1
 FROM debian:bookworm-slim as stage-2
 ARG TARGETARCH
 
@@ -57,7 +56,6 @@ RUN set -ex \
     && apt-get clean all \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=stage-1 /opt/download /opt/download
 COPY --from=stage-2 /usr/local/bin /usr/local/bin
 COPY --from=stage-2 /opt /opt
 COPY web/nginx.conf /etc/nginx/
