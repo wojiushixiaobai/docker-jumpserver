@@ -27,7 +27,7 @@ RUN set -ex \
 
 ARG RECEPTOR_VERSION=1.4.5
 RUN set -ex \
-    && wget -O /opt/receptor.tar.gz https://github.com/ansible/receptor/releases/download/v${RECEPTOR_VERSION}/receptor_${RECEPTOR_VERSION}_linux_${TARGETARCH}.tar.gz \
+    && wget -O /opt/receptor.tar.gz https://github.com/wojiushixiaobai/receptor/releases/download/v${RECEPTOR_VERSION}/receptor_${RECEPTOR_VERSION}_linux_${TARGETARCH}.tar.gz \
     && tar -xf /opt/receptor.tar.gz -C /usr/local/bin/ \
     && chown root:root /usr/local/bin/receptor \
     && chmod 755 /usr/local/bin/receptor \
