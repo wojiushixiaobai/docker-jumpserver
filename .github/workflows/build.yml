@@ -49,6 +49,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          provenance: false
           file: ${{ matrix.component }}/Dockerfile
           platforms: linux/amd64,linux/arm64,linux/ppc64le,linux/s390x
           push: true
@@ -122,24 +123,11 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push Cache Image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ${{ matrix.component }}/Dockerfile.base
-          platforms: linux/amd64,linux/arm64,linux/ppc64le,linux/s390x
-          push: true
-          tags: |
-            ${{ github.repository_owner }}/${{ matrix.component }}:base-bookworm
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.component }}:base-bookworm
-          outputs: type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
       - name: Build and Push Image
         uses: docker/build-push-action@v5
         with:
           context: .
+          provenance: false
           file: ${{ matrix.component }}/Dockerfile
           platforms: linux/amd64,linux/arm64,linux/ppc64le,linux/s390x
           push: true
@@ -194,6 +182,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./allinone
+          provenance: false
           file: ./allinone/Dockerfile
           platforms: linux/amd64,linux/arm64,linux/ppc64le,linux/s390x
           push: true
