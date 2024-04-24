@@ -6,7 +6,7 @@ ARG DEPENDENCIES="                    \
         ca-certificates               \
         wget"
 
-RUN set -ex \
+RUN set -e \
     && apt-get update \
     && apt-get -y install --no-install-recommends ${DEPENDENCIES} \
     && echo "no" | dpkg-reconfigure dash \
@@ -16,8 +16,8 @@ RUN set -ex \
 WORKDIR /opt
 
 ARG CHECK_VERSION=v1.0.2
-RUN set -ex \
-    && wget https://github.com/jumpserver-dev/healthcheck/releases/download/${CHECK_VERSION}/check-${CHECK_VERSION}-linux-${TARGETARCH}.tar.gz \
+RUN set -e \
+    && wget --quiet https://github.com/jumpserver-dev/healthcheck/releases/download/${CHECK_VERSION}/check-${CHECK_VERSION}-linux-${TARGETARCH}.tar.gz \
     && tar -xf check-${CHECK_VERSION}-linux-${TARGETARCH}.tar.gz \
     && mv check /usr/local/bin/ \
     && chown root:root /usr/local/bin/check \
@@ -25,7 +25,7 @@ RUN set -ex \
     && rm -f check-${CHECK_VERSION}-linux-${TARGETARCH}.tar.gz
 
 ARG MONGOSH_VERSION=2.1.1
-RUN set -ex \
+RUN set -e \
     && \
     case "${TARGETARCH}" in \
         'amd64') \
@@ -46,7 +46,7 @@ RUN set -ex \
     esac \
     && \
     if [ -n "${ARCH}" ]; then \
-        wget https://downloads.mongodb.com/compass/mongosh-${MONGOSH_VERSION}-linux-${ARCH}.tgz \
+        wget --quiet https://downloads.mongodb.com/compass/mongosh-${MONGOSH_VERSION}-linux-${ARCH}.tgz \
         && tar -xf mongosh-${MONGOSH_VERSION}-linux-${ARCH}.tgz \
         && chown root:root mongosh-${MONGOSH_VERSION}-linux-${ARCH}/bin/* \
         && mv mongosh-${MONGOSH_VERSION}-linux-${ARCH}/bin/mongosh /usr/local/bin/ \
@@ -57,19 +57,19 @@ RUN set -ex \
 
 ARG HELM_VERSION=v3.14.3
 ARG KUBECTL_VERSION=v1.29.3
-RUN set -ex \
-    && wget -O kubectl.tar.gz https://dl.k8s.io/${KUBECTL_VERSION}/kubernetes-client-linux-${TARGETARCH}.tar.gz \
+RUN set -e \
+    && wget --quiet -O kubectl.tar.gz https://dl.k8s.io/${KUBECTL_VERSION}/kubernetes-client-linux-${TARGETARCH}.tar.gz \
     && tar -xf kubectl.tar.gz --strip-components=3 -C /opt kubernetes/client/bin/kubectl \
     && mv kubectl /usr/local/bin/rawkubectl \
     && mkdir /opt/kubectl-aliases/ \
-    && wget https://github.com/ahmetb/kubectl-aliases/raw/master/.kubectl_aliases \
+    && wget --quiet https://github.com/ahmetb/kubectl-aliases/raw/master/.kubectl_aliases \
     && mv .kubectl_aliases /opt/kubectl-aliases/ \
     && chown -R root:root /opt/kubectl-aliases/ \
     && \
     if [ "${TARGETARCH}" = "loong64" ]; then \
-        wget https://github.com/wojiushixiaobai/helm-loongarch64/releases/download/${HELM_VERSION}/helm-${HELM_VERSION}-linux-${TARGETARCH}.tar.gz; \
+        wget --quiet https://github.com/wojiushixiaobai/helm-loongarch64/releases/download/${HELM_VERSION}/helm-${HELM_VERSION}-linux-${TARGETARCH}.tar.gz; \
     else \
-        wget https://get.helm.sh/helm-${HELM_VERSION}-linux-${TARGETARCH}.tar.gz; \
+        wget --quiet https://get.helm.sh/helm-${HELM_VERSION}-linux-${TARGETARCH}.tar.gz; \
     fi \
     && tar -xf helm-${HELM_VERSION}-linux-${TARGETARCH}.tar.gz --strip-components=1 linux-${TARGETARCH}/helm \
     && mv helm /usr/local/bin/rawhelm \
@@ -79,12 +79,12 @@ RUN set -ex \
 
 WORKDIR /opt/koko
 
-ARG VERSION=v3.10.8
+ARG VERSION=v3.10.9
 ENV VERSION=${VERSION}
 
-RUN set -ex \
+RUN set -e \
     && cd /opt \
-    && wget https://github.com/jumpserver/koko/releases/download/${VERSION}/koko-${VERSION}-linux-${TARGETARCH}.tar.gz \
+    && wget --quiet https://github.com/jumpserver/koko/releases/download/${VERSION}/koko-${VERSION}-linux-${TARGETARCH}.tar.gz \
     && tar -xf koko-${VERSION}-linux-${TARGETARCH}.tar.gz -C /opt/koko/ --strip-components=1 \
     && mv /opt/koko/kubectl /usr/local/bin/ \
     && mv /opt/koko/helm /usr/local/bin/ \
@@ -99,13 +99,14 @@ FROM debian:bookworm-slim
 ENV LANG=en_US.UTF-8
 
 ARG DEPENDENCIES="                    \
+        bash-completion               \
         ca-certificates               \
         libssl-dev                    \
         mariadb-client                \
         openssh-client                \
         postgresql-client"
 
-RUN set -ex \
+RUN set -e \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && apt-get update \
     && apt-get install -y --no-install-recommends ${DEPENDENCIES} \
@@ -122,7 +123,7 @@ COPY --from=stage-2 /opt/kubectl-aliases /opt/kubectl-aliases
 
 WORKDIR /opt/koko
 
-ARG VERSION=v3.10.8
+ARG VERSION=v3.10.9
 ENV VERSION=${VERSION}
 
 VOLUME /opt/koko/data

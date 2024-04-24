@@ -73,6 +73,7 @@ flush privileges;
     - VOLUME /opt/kael/data             # Kael 持久化目录
     - VOLUME /opt/chen/data             # Chen 持久化目录
     - VOLUME /var/log/nginx             # Nginx 日志持久化目录
+    - VOLUME /opt/download              # APPLETS 文件持久化目录 (应用发布机所需文件)
 
 注意：自己上面设置的这些信息一定要记录下来。升级需要重新输入使用
 
@@ -102,8 +103,9 @@ docker run --name jms_all -d \
   -v /opt/jumpserver/lion/data:/opt/lion/data \
   -v /opt/jumpserver/kael/data:/opt/kael/data \
   -v /opt/jumpserver/chen/data:/opt/chen/data \
-  -v /opt/jumpserver/web/log:/var/log/nginx \
-  wojiushixiaobai/jms_all:v3.10.8
+  -v /opt/jumpserver/web/data/logs:/var/log/nginx \
+  -v /opt/jumpserver/web/data/download:/opt/download \
+  wojiushixiaobai/jms_all:v3.10.9
 ```
 
 **升级**
@@ -119,7 +121,7 @@ mysqldump -h$DB_HOST -p$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME > /opt/jumpse
 # 例: mysqldump -h192.168.100.11 -p3306 -ujumpserver -pnu4x599Wq7u0Bn8EABh3J91G jumpserver > /opt/jumpserver-v2.12.0.sql
 
 # 拉取新版本镜像
-docker pull wojiushixiaobai/jms_all:v3.10.8
+docker pull wojiushixiaobai/jms_all:v3.10.9
 
 # 删掉旧版本容器
 docker rm jms_all
@@ -146,5 +148,6 @@ docker run --name jms_all -d \
   -v /opt/jumpserver/lion/data:/opt/lion/data \
   -v /opt/jumpserver/kael/data:/opt/kael/data \
   -v /opt/jumpserver/chen/data:/opt/chen/data \
-  -v /opt/jumpserver/web/log:/var/log/nginx \
-  wojiushixiaobai/jms_all:v3.10.8
+  -v /opt/jumpserver/web/data/logs:/var/log/nginx \
+  -v /opt/jumpserver/web/data/download:/opt/download \
+  wojiushixiaobai/jms_all:v3.10.9

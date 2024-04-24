@@ -5,7 +5,7 @@ ARG DEPENDENCIES="                    \
         ca-certificates               \
         wget"
 
-RUN set -ex \
+RUN set -e \
     && apt-get update \
     && apt-get -y install --no-install-recommends ${DEPENDENCIES} \
     && echo "no" | dpkg-reconfigure dash \
@@ -15,22 +15,22 @@ RUN set -ex \
 WORKDIR /opt
 
 ARG CHECK_VERSION=v1.0.2
-RUN set -ex \
-    && wget https://github.com/jumpserver-dev/healthcheck/releases/download/${CHECK_VERSION}/check-${CHECK_VERSION}-linux-${TARGETARCH}.tar.gz \
+RUN set -e \
+    && wget --quiet https://github.com/jumpserver-dev/healthcheck/releases/download/${CHECK_VERSION}/check-${CHECK_VERSION}-linux-${TARGETARCH}.tar.gz \
     && tar -xf check-${CHECK_VERSION}-linux-${TARGETARCH}.tar.gz \
     && mv check /usr/local/bin/ \
     && chown root:root /usr/local/bin/check \
     && chmod 755 /usr/local/bin/check \
     && rm -f check-${CHECK_VERSION}-linux-${TARGETARCH}.tar.gz
 
-ARG VERSION=v3.10.8
+ARG VERSION=v3.10.9
 ENV VERSION=${VERSION}
 
-RUN set -ex \
+RUN set -e \
     && mkdir -p /opt/lina /opt/luna \
-    && wget https://github.com/jumpserver/lina/releases/download/${VERSION}/lina-${VERSION}.tar.gz \
+    && wget --quiet https://github.com/jumpserver/lina/releases/download/${VERSION}/lina-${VERSION}.tar.gz \
     && tar -xf lina-${VERSION}.tar.gz -C /opt/lina --strip-components=1 \
-    && wget https://github.com/jumpserver/luna/releases/download/${VERSION}/luna-${VERSION}.tar.gz \
+    && wget --quiet https://github.com/jumpserver/luna/releases/download/${VERSION}/luna-${VERSION}.tar.gz \
     && tar -xf luna-${VERSION}.tar.gz -C /opt/luna --strip-components=1 \
     && rm -f /opt/*.tar.gz
 
@@ -42,9 +42,10 @@ ENV LANG=en_US.UTF-8
 
 ARG DEPENDENCIES="                    \
         ca-certificates               \
-        logrotate"
+        logrotate                     \
+        wget"
 
-RUN set -ex \
+RUN set -e \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && apt-get update \
     && apt-get install -y --no-install-recommends ${DEPENDENCIES} \
@@ -60,9 +61,17 @@ COPY web/nginx.conf /etc/nginx/
 
 WORKDIR /opt
 
-ARG VERSION=v3.10.8
+RUN set -ex \
+    && STATIC_VERSION=$(curl -s https://raw.githubusercontent.com/jumpserver/web-static/master/VERSION) \
+    && wget -O /opt/prepare.sh https://github.com/jumpserver/web-static/raw/${STATIC_VERSION}/prepare.sh \
+    && chown root:root /opt/prepare.sh \
+    && chmod 755 /opt/prepare.sh \
+    && sed -i 's@https://gitea.com/jumpserver/web-static/raw/tag/.*/download/@https://gitea.com/jumpserver/web-static/raw/tag/${STATIC_VERSION}/download/@g' /etc/nginx/nginx.conf
+
+ARG VERSION=v3.10.9
 ENV VERSION=${VERSION}
 
+VOLUME /opt/download
 VOLUME /var/log/nginx
 
 CMD [ "./entrypoint.sh" ]

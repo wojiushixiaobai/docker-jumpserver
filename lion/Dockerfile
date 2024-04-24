@@ -5,7 +5,7 @@ ARG DEPENDENCIES="                    \
         ca-certificates               \
         wget"
 
-RUN set -ex \
+RUN set -e \
     && apt-get update \
     && apt-get -y install --no-install-recommends ${DEPENDENCIES} \
     && echo "no" | dpkg-reconfigure dash \
@@ -15,8 +15,8 @@ RUN set -ex \
 WORKDIR /opt
 
 ARG CHECK_VERSION=v1.0.2
-RUN set -ex \
-    && wget https://github.com/jumpserver-dev/healthcheck/releases/download/${CHECK_VERSION}/check-${CHECK_VERSION}-linux-${TARGETARCH}.tar.gz \
+RUN set -e \
+    && wget --quiet https://github.com/jumpserver-dev/healthcheck/releases/download/${CHECK_VERSION}/check-${CHECK_VERSION}-linux-${TARGETARCH}.tar.gz \
     && tar -xf check-${CHECK_VERSION}-linux-${TARGETARCH}.tar.gz \
     && mv check /usr/local/bin/ \
     && chown root:root /usr/local/bin/check \
@@ -25,11 +25,11 @@ RUN set -ex \
 
 WORKDIR /opt/lion
 
-ARG VERSION=v3.10.8
+ARG VERSION=v3.10.9
 ENV VERSION=${VERSION}
 
-RUN set -ex \
-    && wget https://github.com/jumpserver/lion-release/releases/download/${VERSION}/lion-${VERSION}-linux-${TARGETARCH}.tar.gz \
+RUN set -e \
+    && wget --quiet https://github.com/jumpserver/lion-release/releases/download/${VERSION}/lion-${VERSION}-linux-${TARGETARCH}.tar.gz \
     && tar -xf lion-${VERSION}-linux-${TARGETARCH}.tar.gz -C /opt/lion --strip-components=1 \
     && chown -R root:root /opt/lion \
     && rm -f /opt/*.tar.gz
@@ -46,7 +46,7 @@ ARG DEPENDENCIES="                    \
 
 USER root
 
-RUN set -ex \
+RUN set -e \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && apt-get update \
     && apt-get install -y --no-install-recommends ${DEPENDENCIES} \
@@ -62,7 +62,7 @@ COPY lion/supervisord.conf /etc/supervisor/conf.d/lion.conf
 
 WORKDIR /opt/lion
 
-ARG VERSION=v3.10.8
+ARG VERSION=v3.10.9
 ENV VERSION=${VERSION}
 
 VOLUME /opt/lion/data
