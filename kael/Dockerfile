@@ -5,12 +5,14 @@ ARG DEPENDENCIES="                    \
         ca-certificates               \
         wget"
 
-RUN set -e \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    set -e \
+    && rm -f /etc/apt/apt.conf.d/docker-clean \
+    && echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' >/etc/apt/apt.conf.d/keep-cache \
     && apt-get update \
     && apt-get -y install --no-install-recommends ${DEPENDENCIES} \
-    && echo "no" | dpkg-reconfigure dash \
-    && apt-get clean all \
-    && rm -rf /var/lib/apt/lists/*
+    && echo "no" | dpkg-reconfigure dash
 
 WORKDIR /opt
 
@@ -53,16 +55,17 @@ ENV LANG=en_US.UTF-8
 ARG DEPENDENCIES="                    \
         ca-certificates"
 
-RUN set -e \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    set -e \
+    && rm -f /etc/apt/apt.conf.d/docker-clean \
+    && echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' >/etc/apt/apt.conf.d/keep-cache \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && apt-get update \
     && apt-get install -y --no-install-recommends ${DEPENDENCIES} \
-    && apt-get update \
     && echo "no" | dpkg-reconfigure dash \
     && sed -i "s@# export @export @g" ~/.bashrc \
-    && sed -i "s@# alias @alias @g" ~/.bashrc \
-    && apt-get clean all \
-    && rm -rf /var/lib/apt/lists/*
+    && sed -i "s@# alias @alias @g" ~/.bashrc
 
 COPY --from=stage-1 /usr/local/bin /usr/local/bin
 COPY --from=stage-1 /opt/kael /opt/kael
@@ -74,6 +77,11 @@ ENV VERSION=${VERSION}
 
 VOLUME /opt/kael/data
 
+COPY kael/entrypoint.sh /opt/entrypoint.sh
+ENTRYPOINT ["/opt/entrypoint.sh"]
+
 EXPOSE 8083
 
-CMD [ "./entrypoint.sh" ]
+STOPSIGNAL SIGQUIT
+
+CMD [ "wisp" ]

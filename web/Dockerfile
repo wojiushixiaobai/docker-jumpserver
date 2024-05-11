@@ -3,14 +3,17 @@ ARG TARGETARCH
 
 ARG DEPENDENCIES="                    \
         ca-certificates               \
+        curl                          \
         wget"
 
-RUN set -e \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    set -e \
+    && rm -f /etc/apt/apt.conf.d/docker-clean \
+    && echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' >/etc/apt/apt.conf.d/keep-cache \
     && apt-get update \
     && apt-get -y install --no-install-recommends ${DEPENDENCIES} \
-    && echo "no" | dpkg-reconfigure dash \
-    && apt-get clean all \
-    && rm -rf /var/lib/apt/lists/*
+    && echo "no" | dpkg-reconfigure dash
 
 WORKDIR /opt
 
@@ -34,6 +37,12 @@ RUN set -e \
     && tar -xf luna-${VERSION}.tar.gz -C /opt/luna --strip-components=1 \
     && rm -f /opt/*.tar.gz
 
+RUN set -e \
+    && STATIC_VERSION=$(curl -sSL https://github.com/jumpserver/web-static/raw/v3/VERSION) \
+    && wget -O /opt/prepare.sh https://github.com/jumpserver/web-static/raw/${STATIC_VERSION}/prepare.sh \
+    && chown root:root /opt/prepare.sh \
+    && chmod 755 /opt/prepare.sh
+
 COPY web/entrypoint.sh .
 RUN chmod 755 ./entrypoint.sh
 
@@ -42,18 +51,19 @@ ENV LANG=en_US.UTF-8
 
 ARG DEPENDENCIES="                    \
         ca-certificates               \
-        logrotate                     \
-        wget"
+        logrotate"
 
-RUN set -e \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    set -e \
+    && rm -f /etc/apt/apt.conf.d/docker-clean \
+    && echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' >/etc/apt/apt.conf.d/keep-cache \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && apt-get update \
     && apt-get install -y --no-install-recommends ${DEPENDENCIES} \
     && echo "no" | dpkg-reconfigure dash \
     && sed -i "s@# export @export @g" ~/.bashrc \
-    && sed -i "s@# alias @alias @g" ~/.bashrc \
-    && apt-get clean all \
-    && rm -rf /var/lib/apt/lists/*
+    && sed -i "s@# alias @alias @g" ~/.bashrc
 
 COPY --from=stage-1 /usr/local/bin /usr/local/bin
 COPY --from=stage-1 /opt /opt
@@ -61,16 +71,10 @@ COPY web/nginx.conf /etc/nginx/
 
 WORKDIR /opt
 
-RUN set -ex \
-    && STATIC_VERSION=$(curl -sSL https://github.com/jumpserver/web-static/raw/v3/VERSION) \
-    && wget -O /opt/prepare.sh https://github.com/jumpserver/web-static/raw/${STATIC_VERSION}/prepare.sh \
-    && chown root:root /opt/prepare.sh \
-    && chmod 755 /opt/prepare.sh
-
 ARG VERSION=v3.10.9
 ENV VERSION=${VERSION}
 
 VOLUME /opt/download
 VOLUME /var/log/nginx
 
-CMD [ "./entrypoint.sh" ]
+COPY web/entrypoint.sh /docker-entrypoint.d/99-check-core-ready.sh

@@ -190,6 +190,11 @@ ENV VERSION=${VERSION}
 
 VOLUME /opt/jumpserver/data
 
+COPY core/entrypoint.sh /opt/entrypoint.sh
+ENTRYPOINT ["/opt/entrypoint.sh"]
+
 EXPOSE 8080
 
-ENTRYPOINT ["./entrypoint.sh"]
+STOPSIGNAL SIGQUIT
+
+CMD ["start", "all"]
