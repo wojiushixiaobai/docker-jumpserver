@@ -152,7 +152,6 @@ ENV LANG=en_US.UTF-8 \
     PATH=/opt/py3/bin:$PATH
 
 ARG DEPENDENCIES="                    \
-        freerdp2-dev                  \
         libldap2-dev                  \
         libpq-dev                     \
         libx11-dev                    \
