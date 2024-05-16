@@ -105,7 +105,7 @@ docker run --name jms_all -d \
   -v /opt/jumpserver/chen/data:/opt/chen/data \
   -v /opt/jumpserver/web/data/logs:/var/log/nginx \
   -v /opt/jumpserver/web/data/download:/opt/download \
-  wojiushixiaobai/jms_all:v3.10.9
+  wojiushixiaobai/jms_all:v3.10.10
 ```
 
 **升级**
@@ -121,7 +121,7 @@ mysqldump -h$DB_HOST -p$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME > /opt/jumpse
 # 例: mysqldump -h192.168.100.11 -p3306 -ujumpserver -pnu4x599Wq7u0Bn8EABh3J91G jumpserver > /opt/jumpserver-v2.12.0.sql
 
 # 拉取新版本镜像
-docker pull wojiushixiaobai/jms_all:v3.10.9
+docker pull wojiushixiaobai/jms_all:v3.10.10
 
 # 删掉旧版本容器
 docker rm jms_all
@@ -150,4 +150,4 @@ docker run --name jms_all -d \
   -v /opt/jumpserver/chen/data:/opt/chen/data \
   -v /opt/jumpserver/web/data/logs:/var/log/nginx \
   -v /opt/jumpserver/web/data/download:/opt/download \
-  wojiushixiaobai/jms_all:v3.10.9
+  wojiushixiaobai/jms_all:v3.10.10
